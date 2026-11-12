@@ -1,0 +1,332 @@
+// Circle.social — Initial database foundation
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "esm"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DEACTIVATED
+}
+
+enum MembershipRole {
+  MEMBER
+  MODERATOR
+  OWNER
+}
+
+enum ProfileTheme {
+  SYSTEM
+  LIGHT
+  DARK
+}
+
+enum ProfileAccent {
+  INDIGO
+  TEAL
+  ROSE
+  AMBER
+}
+
+model User {
+  id        String     @id @default(uuid()) @db.Uuid
+  handle    String     @unique @db.VarChar(40)
+  status    UserStatus @default(ACTIVE)
+  createdAt DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime   @updatedAt @db.Timestamptz(3)
+
+  displayName           String?       @db.VarChar(50)
+  bio                   String?       @db.VarChar(280)
+  avatarId              String        @default("otter") @db.VarChar(24)
+  profileTheme          ProfileTheme  @default(SYSTEM)
+  profileAccent         ProfileAccent @default(INDIGO)
+  profileVersion        Int           @default(0)
+  onboardingCompletedAt DateTime?     @db.Timestamptz(3)
+
+  customThemes CustomTheme[] @relation("OwnedThemes")
+  activeThemeSnapshot Json?
+  activeThemeMediaId String? @db.Uuid
+  activeThemeMedia Media? @relation("AppliedThemeImage", fields:[activeThemeMediaId], references:[id], onDelete:Restrict)
+  activeThemeId String? @db.Uuid
+  activeTheme CustomTheme? @relation("SelectedTheme",fields:[activeThemeId],references:[id],onDelete:SetNull)
+  themeVersion Int @default(0)
+  avatar UserAvatar?
+  recoveryCredentials RecoveryCredential[]
+  posts Post[]
+  onboarding  UserOnboarding?
+  memberships CommunityMembership[]
+  passkeys    Passkey[]
+  sessions    Session[]
+  auditEvents AuditEvent[]
+
+  uploads Media[]
+  likes PostLike[]
+  saves PostSave[]
+  reposts PostRepost[]
+  comments Comment[]
+  following UserFollow[] @relation("Follower")
+  followers UserFollow[] @relation("Followed")
+  receivedActivity Activity[] @relation("ActivityRecipient")
+  sentActivity Activity[] @relation("ActivityActor")
+  @@map("users")
+}
+
+model Community {
+  id          String   @id @default(uuid()) @db.Uuid
+  slug        String   @unique @db.VarChar(60)
+  name        String   @db.VarChar(100)
+  description String?  @db.VarChar(500)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(3)
+
+  memberships CommunityMembership[]
+  posts Post[]
+
+  @@map("communities")
+}
+
+model CommunityMembership {
+  userId      String         @db.Uuid
+  communityId String         @db.Uuid
+  role        MembershipRole @default(MEMBER)
+  joinedAt    DateTime       @default(now()) @db.Timestamptz(3)
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+
+  @@id([userId, communityId])
+  @@index([communityId, joinedAt])
+  @@map("community_memberships")
+}
+
+model Passkey {
+  id         String   @id
+  userId     String   @db.Uuid
+  publicKey  Bytes
+  counter    BigInt   @default(0)
+  transports String[]
+  deviceType String   @db.VarChar(30)
+  backedUp   Boolean  @default(false)
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("passkeys")
+}
+
+model Session {
+  locationCity String? @db.VarChar(120)
+  locationCountry String? @db.VarChar(80)
+  locationCountryCode String? @db.Char(2)
+  id        String    @id @default(uuid()) @db.Uuid
+  tokenHash String    @unique @db.VarChar(64)
+  userId    String    @db.Uuid
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  expiresAt DateTime  @db.Timestamptz(3)
+  revokedAt DateTime? @db.Timestamptz(3)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+model AuditEvent {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String?  @db.Uuid
+  kind      String   @db.VarChar(60)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@map("audit_events")
+}
+
+enum OnboardingGender {
+  MALE
+  FEMALE
+  PREFER_NOT_TO_SAY
+}
+
+enum OnboardingVibe {
+  BOLD
+  CALM
+  DARK
+}
+
+model UserOnboarding {
+  userId       String            @id @db.Uuid
+  gender       OnboardingGender?
+  vibe         OnboardingVibe
+  backgroundId String            @db.VarChar(24)
+  interests    String[]          @default([])
+  createdAt    DateTime          @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime          @updatedAt @db.Timestamptz(3)
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_onboarding")
+}
+
+model RecoveryCredential {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @db.Uuid
+  verifier String @db.VarChar(64)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  expiresAt DateTime @db.Timestamptz(3)
+  confirmedAt DateTime? @db.Timestamptz(3)
+  usedAt DateTime? @db.Timestamptz(3)
+  revokedAt DateTime? @db.Timestamptz(3)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
+  @@map("recovery_credentials")
+}
+
+model Post {
+  id String @id @default(uuid()) @db.Uuid
+  authorId String @db.Uuid
+  communityId String @db.Uuid
+  text String @db.VarChar(500)
+  interests String[] @default([])
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  @@index([communityId, createdAt])
+  @@map("posts")
+  mediaUrls String[] @default([])
+  deletedAt DateTime? @db.Timestamptz(3)
+  attachments Media[]
+  likes PostLike[]
+  saves PostSave[]
+  reposts PostRepost[]
+  comments Comment[]
+  activity Activity[]
+
+}
+
+model PostLike {
+  userId String @db.Uuid
+  postId String @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+  post Post @relation(fields:[postId],references:[id],onDelete:Cascade)
+  @@id([userId,postId])
+  @@index([postId])
+  @@map("post_likes")
+}
+model PostSave {
+  userId String @db.Uuid
+  postId String @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+  post Post @relation(fields:[postId],references:[id],onDelete:Cascade)
+  @@id([userId,postId])
+  @@index([postId])
+  @@map("post_saves")
+}
+model PostRepost {
+  userId String @db.Uuid
+  postId String @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+  post Post @relation(fields:[postId],references:[id],onDelete:Cascade)
+  @@id([userId,postId])
+  @@index([postId])
+  @@map("post_reposts")
+}
+model Comment {
+ id String @id @default(uuid()) @db.Uuid
+ userId String @db.Uuid
+ postId String @db.Uuid
+ text String @db.VarChar(500)
+ createdAt DateTime @default(now()) @db.Timestamptz(3)
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ post Post @relation(fields:[postId],references:[id],onDelete:Cascade)
+ @@index([postId,createdAt])
+ @@map("comments")
+}
+model UserFollow {
+ followerId String @db.Uuid
+ followingId String @db.Uuid
+ createdAt DateTime @default(now()) @db.Timestamptz(3)
+ follower User @relation("Follower",fields:[followerId],references:[id],onDelete:Cascade)
+ following User @relation("Followed",fields:[followingId],references:[id],onDelete:Cascade)
+ @@id([followerId,followingId])
+ @@index([followingId])
+ @@map("user_follows")
+}
+model Activity {
+ id String @id @default(uuid()) @db.Uuid
+ recipientId String @db.Uuid
+ actorId String @db.Uuid
+ postId String? @db.Uuid
+ kind String @db.VarChar(16)
+ createdAt DateTime @default(now()) @db.Timestamptz(3)
+ readAt DateTime? @db.Timestamptz(3)
+ recipient User @relation("ActivityRecipient",fields:[recipientId],references:[id],onDelete:Cascade)
+ actor User @relation("ActivityActor",fields:[actorId],references:[id],onDelete:Cascade)
+ post Post? @relation(fields:[postId],references:[id],onDelete:Cascade)
+ @@index([recipientId,createdAt])
+ @@map("activity")
+}
+
+// Authenticated local media store. Bytes never appear in JSON projections.
+model Media {
+  appliedThemeUsers User[] @relation("AppliedThemeImage")
+ themes CustomTheme[]
+ id String @id @default(uuid()) @db.Uuid
+ ownerId String @db.Uuid
+ postId String? @db.Uuid
+ kind String @db.VarChar(8)
+ mimeType String @db.VarChar(40)
+ bytes Bytes
+ size Int
+ durationSeconds Float?
+ createdAt DateTime @default(now()) @db.Timestamptz(3)
+ owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+ post Post? @relation(fields: [postId], references: [id], onDelete: Cascade)
+ @@index([ownerId, createdAt])
+ @@index([postId])
+ @@map("media")
+}
+
+model UserAvatar {
+ id String @id @default(uuid()) @db.Uuid
+ userId String @unique @db.Uuid
+ seed String @db.VarChar(100)
+ defaultSeed String @db.VarChar(100)
+ config Json
+ version Int @default(1)
+ revision Int @default(0)
+ createdAt DateTime @default(now()) @db.Timestamptz(3)
+ updatedAt DateTime @updatedAt @db.Timestamptz(3)
+ user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+ @@map("user_avatars")
+}
+
+model CustomTheme {
+ id String @id @default(uuid()) @db.Uuid
+ userId String @db.Uuid
+ name String @db.VarChar(60)
+ description String @db.VarChar(180)
+ version Int @default(1)
+ config Json
+ byteSize Int
+ revision Int @default(0)
+ backgroundMediaId String? @db.Uuid
+ backgroundMedia Media? @relation(fields:[backgroundMediaId],references:[id],onDelete:Restrict)
+ user User @relation("OwnedThemes",fields:[userId],references:[id],onDelete:Cascade)
+ activeUsers User[] @relation("SelectedTheme")
+ createdAt DateTime @default(now()) @db.Timestamptz(3)
+ updatedAt DateTime @updatedAt @db.Timestamptz(3)
+ deletedAt DateTime? @db.Timestamptz(3)
+ @@index([userId,deletedAt,updatedAt])
+ @@map("custom_themes")
+}

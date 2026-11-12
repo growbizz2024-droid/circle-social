@@ -1,0 +1,28 @@
+name: Security
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 3 * * 1"
+permissions:
+  contents: read
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Secret scanning
+        run: docker run --rm -v "$PWD:/repo:ro" zricethezav/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f dir /repo --redact --no-banner
+      - name: Build PostgreSQL image for scanning
+        run: |
+          mkdir -p /tmp/circle-image-scan
+          docker build -t circle-social-postgres:16-dev infrastructure/docker/postgres
+          docker save circle-social-postgres:16-dev -o /tmp/circle-image-scan/circle-postgres.tar
+      - name: Scan PostgreSQL image
+        run: docker run --rm -v circle_ci_trivy:/root/.cache/trivy -v /tmp/circle-image-scan:/images:ro aquasec/trivy:0.76.1@sha256:790fd66d1697395d8693d1acaa1ea702406a20f109b6fc7bac8db623eca6c06c image --quiet --no-progress --timeout 15m --db-repository ghcr.io/aquasecurity/trivy-db:2 --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --input /images/circle-postgres.tar
+      - name: Scan Redis image
+        run: docker run --rm -v circle_ci_trivy:/root/.cache/trivy -v /tmp/circle-image-scan:/images:ro aquasec/trivy:0.76.1@sha256:790fd66d1697395d8693d1acaa1ea702406a20f109b6fc7bac8db623eca6c06c image --quiet --no-progress --timeout 15m --db-repository ghcr.io/aquasecurity/trivy-db:2 --scanners vuln --severity HIGH,CRITICAL --exit-code 1 redis:7-alpine

@@ -1,0 +1,64 @@
+name: circle-social-dev
+
+services:
+  postgres:
+    build:
+      context: ./postgres
+    image: circle-social-postgres:16-dev
+    pull_policy: build
+    container_name: circle-social-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Missing POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER:?Missing POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Missing POSTGRES_PASSWORD}
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - circle_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - circle_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: circle-social-redis
+    restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Missing REDIS_PASSWORD}
+    command:
+      - sh
+      - -c
+      - exec redis-server --appendonly yes --requirepass "$$REDIS_PASSWORD"
+    ports:
+      - "127.0.0.1:6380:6379"
+    volumes:
+      - circle_redis_data:/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - redis-cli -a "$$REDIS_PASSWORD" ping 2>/dev/null | grep -q PONG
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    networks:
+      - circle_network
+
+volumes:
+  circle_postgres_data:
+    name: circle_postgres_data
+  circle_redis_data:
+    name: circle_redis_data
+
+networks:
+  circle_network:
+    name: circle_network
+    driver: bridge

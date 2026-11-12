@@ -1,0 +1,1789 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/v1/auth/registration/options": {
+      "post": {
+        "operationId": "AuthController_registrationOptions",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "handle": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 40,
+                    "pattern": "^[a-z0-9_]+$"
+                  },
+                  "avatar": {
+                    "type": "object",
+                    "properties": {
+                      "version": {
+                        "type": "number",
+                        "enum": [
+                          1
+                        ]
+                      },
+                      "seed": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z0-9_-]{1,100}$"
+                      },
+                      "config": {
+                        "type": "object",
+                        "properties": {
+                          "head": {
+                            "type": "string",
+                            "enum": [
+                              "oval",
+                              "round",
+                              "angular",
+                              "pill"
+                            ]
+                          },
+                          "body": {
+                            "type": "string",
+                            "enum": [
+                              "relaxed",
+                              "broad",
+                              "tapered"
+                            ]
+                          },
+                          "skinTone": {
+                            "type": "string",
+                            "enum": [
+                              "porcelain",
+                              "sand",
+                              "warm-beige",
+                              "olive",
+                              "golden",
+                              "caramel",
+                              "umber",
+                              "cocoa",
+                              "espresso",
+                              "deep"
+                            ]
+                          },
+                          "hair": {
+                            "type": "string",
+                            "enum": [
+                              "crop",
+                              "swept",
+                              "waves",
+                              "curls",
+                              "locs",
+                              "bob",
+                              "long",
+                              "bun",
+                              "shaved"
+                            ]
+                          },
+                          "hairColor": {
+                            "type": "string",
+                            "enum": [
+                              "ink",
+                              "espresso",
+                              "chestnut",
+                              "copper",
+                              "honey",
+                              "silver",
+                              "plum",
+                              "teal"
+                            ]
+                          },
+                          "outfit": {
+                            "type": "string",
+                            "enum": [
+                              "hoodie",
+                              "bomber",
+                              "knit",
+                              "tee",
+                              "blazer",
+                              "jersey",
+                              "techwear",
+                              "future"
+                            ]
+                          },
+                          "accessory": {
+                            "type": "string",
+                            "enum": [
+                              "none",
+                              "round-glasses",
+                              "shades",
+                              "headphones",
+                              "cap",
+                              "beanie",
+                              "visor"
+                            ]
+                          },
+                          "background": {
+                            "type": "string",
+                            "enum": [
+                              "ember-gradient",
+                              "night-solid",
+                              "cream-solid",
+                              "orange-solid",
+                              "plum-gradient",
+                              "teal-gradient",
+                              "orbital-abstract",
+                              "contour-abstract"
+                            ]
+                          },
+                          "style": {
+                            "type": "string",
+                            "enum": [
+                              "faceless",
+                              "abstract",
+                              "expressive"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "head",
+                          "body",
+                          "skinTone",
+                          "hair",
+                          "hairColor",
+                          "outfit",
+                          "accessory",
+                          "background",
+                          "style"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "version",
+                      "seed",
+                      "config"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "intent": {
+                    "type": "string",
+                    "enum": [
+                      "create",
+                      "add"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/registration/verify": {
+      "post": {
+        "operationId": "AuthController_registrationVerify",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2048,
+                    "pattern": "^[A-Za-z0-9_-]+$"
+                  },
+                  "rawId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2048,
+                    "pattern": "^[A-Za-z0-9_-]+$"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "public-key"
+                    ]
+                  },
+                  "clientExtensionResults": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  },
+                  "authenticatorAttachment": {
+                    "type": "string"
+                  },
+                  "response": {
+                    "type": "object",
+                    "properties": {
+                      "clientDataJSON": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 60000,
+                        "pattern": "^[A-Za-z0-9_-]+$"
+                      },
+                      "attestationObject": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 60000,
+                        "pattern": "^[A-Za-z0-9_-]+$"
+                      },
+                      "transports": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "required": [
+                      "clientDataJSON",
+                      "attestationObject"
+                    ],
+                    "additionalProperties": {}
+                  }
+                },
+                "required": [
+                  "id",
+                  "rawId",
+                  "type",
+                  "clientExtensionResults",
+                  "response"
+                ],
+                "additionalProperties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/recovery/status": {
+      "get": {
+        "operationId": "AuthController_recoveryStatus",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/recovery/issue": {
+      "post": {
+        "operationId": "AuthController_issueRecovery",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/recovery/confirm": {
+      "post": {
+        "operationId": "AuthController_confirmRecovery",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "pattern": "^CS1\\.[0-9a-f-]{36}\\.[A-Za-z0-9_-]{43}$"
+                  }
+                },
+                "required": [
+                  "code"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/recovery/options": {
+      "post": {
+        "operationId": "AuthController_recoveryOptions",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "pattern": "^CS1\\.[0-9a-f-]{36}\\.[A-Za-z0-9_-]{43}$"
+                  }
+                },
+                "required": [
+                  "code"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/recovery/verify": {
+      "post": {
+        "operationId": "AuthController_recoveryVerify",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2048,
+                    "pattern": "^[A-Za-z0-9_-]+$"
+                  },
+                  "rawId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2048,
+                    "pattern": "^[A-Za-z0-9_-]+$"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "public-key"
+                    ]
+                  },
+                  "clientExtensionResults": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  },
+                  "authenticatorAttachment": {
+                    "type": "string"
+                  },
+                  "response": {
+                    "type": "object",
+                    "properties": {
+                      "clientDataJSON": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 60000,
+                        "pattern": "^[A-Za-z0-9_-]+$"
+                      },
+                      "attestationObject": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 60000,
+                        "pattern": "^[A-Za-z0-9_-]+$"
+                      },
+                      "transports": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "required": [
+                      "clientDataJSON",
+                      "attestationObject"
+                    ],
+                    "additionalProperties": {}
+                  }
+                },
+                "required": [
+                  "id",
+                  "rawId",
+                  "type",
+                  "clientExtensionResults",
+                  "response"
+                ],
+                "additionalProperties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/authentication/options": {
+      "post": {
+        "operationId": "AuthController_authenticationOptions",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/authentication/verify": {
+      "post": {
+        "operationId": "AuthController_authenticationVerify",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2048,
+                    "pattern": "^[A-Za-z0-9_-]+$"
+                  },
+                  "rawId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2048,
+                    "pattern": "^[A-Za-z0-9_-]+$"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "public-key"
+                    ]
+                  },
+                  "clientExtensionResults": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  },
+                  "authenticatorAttachment": {
+                    "type": "string"
+                  },
+                  "response": {
+                    "type": "object",
+                    "properties": {
+                      "clientDataJSON": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 60000,
+                        "pattern": "^[A-Za-z0-9_-]+$"
+                      },
+                      "authenticatorData": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 60000,
+                        "pattern": "^[A-Za-z0-9_-]+$"
+                      },
+                      "signature": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 60000,
+                        "pattern": "^[A-Za-z0-9_-]+$"
+                      },
+                      "userHandle": {
+                        "nullable": true,
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2048,
+                        "pattern": "^[A-Za-z0-9_-]+$"
+                      }
+                    },
+                    "required": [
+                      "clientDataJSON",
+                      "authenticatorData",
+                      "signature"
+                    ],
+                    "additionalProperties": {}
+                  }
+                },
+                "required": [
+                  "id",
+                  "rawId",
+                  "type",
+                  "clientExtensionResults",
+                  "response"
+                ],
+                "additionalProperties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/mobile/authorize": {
+      "post": {
+        "operationId": "AuthController_authorizeMobile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/mobile/exchange": {
+      "post": {
+        "operationId": "AuthController_exchangeMobile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/me": {
+      "get": {
+        "operationId": "AuthController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/passkeys": {
+      "get": {
+        "operationId": "AuthController_passkeys",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/passkeys/{id}": {
+      "delete": {
+        "operationId": "AuthController_removePasskey",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/sessions": {
+      "get": {
+        "operationId": "AuthController_sessions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/sessions/{id}": {
+      "delete": {
+        "operationId": "AuthController_revoke",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/auth/logout-all": {
+      "post": {
+        "operationId": "AuthController_logoutAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/v1/health/metrics": {
+      "get": {
+        "operationId": "HealthController_metrics",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/v1/health/live": {
+      "get": {
+        "operationId": "HealthController_live",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/v1/health/ready": {
+      "get": {
+        "operationId": "HealthController_ready",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/v1/communities": {
+      "get": {
+        "operationId": "CommunitiesController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Communities"
+        ]
+      }
+    },
+    "/v1/users/me": {
+      "get": {
+        "operationId": "UsersController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Identity"
+        ]
+      },
+      "patch": {
+        "operationId": "UsersController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileVersion": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 2147483646
+                  },
+                  "displayName": {
+                    "nullable": true,
+                    "type": "string",
+                    "maxLength": 50
+                  },
+                  "bio": {
+                    "nullable": true,
+                    "type": "string",
+                    "maxLength": 280
+                  },
+                  "avatarId": {
+                    "type": "string",
+                    "enum": [
+                      "otter",
+                      "owl",
+                      "fox",
+                      "cat",
+                      "koala",
+                      "bear"
+                    ]
+                  },
+                  "profileTheme": {
+                    "type": "string",
+                    "enum": [
+                      "SYSTEM",
+                      "LIGHT",
+                      "DARK"
+                    ]
+                  },
+                  "profileAccent": {
+                    "type": "string",
+                    "enum": [
+                      "INDIGO",
+                      "TEAL",
+                      "ROSE",
+                      "AMBER"
+                    ]
+                  }
+                },
+                "required": [
+                  "profileVersion"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Identity"
+        ]
+      }
+    },
+    "/v1/users/me/communities": {
+      "get": {
+        "operationId": "UsersController_communities",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Identity"
+        ]
+      }
+    },
+    "/v1/users/me/complete": {
+      "post": {
+        "operationId": "UsersController_complete",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "gender": {
+                    "nullable": true,
+                    "type": "string",
+                    "enum": [
+                      "MALE",
+                      "FEMALE",
+                      "PREFER_NOT_TO_SAY"
+                    ]
+                  },
+                  "vibe": {
+                    "type": "string",
+                    "enum": [
+                      "BOLD",
+                      "CALM",
+                      "DARK"
+                    ]
+                  },
+                  "backgroundId": {
+                    "type": "string",
+                    "enum": [
+                      "ember",
+                      "clouds",
+                      "botanical",
+                      "alpine",
+                      "city",
+                      "midnight"
+                    ]
+                  },
+                  "interests": {
+                    "maxItems": 15,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "technology",
+                        "relationships",
+                        "lifestyle",
+                        "business",
+                        "education",
+                        "entertainment",
+                        "food",
+                        "travel",
+                        "fitness",
+                        "fashion",
+                        "mental-health",
+                        "gaming",
+                        "books",
+                        "politics",
+                        "local-issues"
+                      ]
+                    }
+                  },
+                  "profileVersion": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 2147483646
+                  },
+                  "communityIds": {
+                    "maxItems": 5,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    }
+                  }
+                },
+                "required": [
+                  "gender",
+                  "vibe",
+                  "backgroundId",
+                  "interests",
+                  "profileVersion",
+                  "communityIds"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Identity"
+        ]
+      }
+    },
+    "/v1/users/me/onboarding": {
+      "put": {
+        "operationId": "UsersController_completeOnboarding",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "gender": {
+                    "nullable": true,
+                    "type": "string",
+                    "enum": [
+                      "MALE",
+                      "FEMALE",
+                      "PREFER_NOT_TO_SAY"
+                    ]
+                  },
+                  "vibe": {
+                    "type": "string",
+                    "enum": [
+                      "BOLD",
+                      "CALM",
+                      "DARK"
+                    ]
+                  },
+                  "backgroundId": {
+                    "type": "string",
+                    "enum": [
+                      "ember",
+                      "clouds",
+                      "botanical",
+                      "alpine",
+                      "city",
+                      "midnight"
+                    ]
+                  },
+                  "interests": {
+                    "maxItems": 15,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "technology",
+                        "relationships",
+                        "lifestyle",
+                        "business",
+                        "education",
+                        "entertainment",
+                        "food",
+                        "travel",
+                        "fitness",
+                        "fashion",
+                        "mental-health",
+                        "gaming",
+                        "books",
+                        "politics",
+                        "local-issues"
+                      ]
+                    }
+                  },
+                  "profileVersion": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 2147483646
+                  }
+                },
+                "required": [
+                  "gender",
+                  "vibe",
+                  "backgroundId",
+                  "interests",
+                  "profileVersion"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Identity"
+        ]
+      }
+    },
+    "/v1/users/me/deactivate": {
+      "post": {
+        "operationId": "UsersController_deactivate",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "confirmation": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 40,
+                    "pattern": "^[a-z0-9_]+$"
+                  }
+                },
+                "required": [
+                  "confirmation"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Identity"
+        ]
+      }
+    },
+    "/v1/discover": {
+      "get": {
+        "operationId": "SocialFeedController_discovery",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Social feed"
+        ]
+      }
+    },
+    "/v1/communities/{id}/detail": {
+      "get": {
+        "operationId": "SocialFeedController_detail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Social feed"
+        ]
+      }
+    },
+    "/v1/feed": {
+      "get": {
+        "operationId": "SocialFeedController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Social feed"
+        ]
+      }
+    },
+    "/v1/posts/{id}": {
+      "get": {
+        "operationId": "SocialFeedController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Social feed"
+        ]
+      },
+      "delete": {
+        "operationId": "SocialFeedController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Social feed"
+        ]
+      }
+    },
+    "/v1/posts": {
+      "post": {
+        "operationId": "SocialFeedController_publish",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "communityId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "text": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "attachmentIds": {
+                    "default": [],
+                    "maxItems": 3,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    }
+                  },
+                  "mediaUrls": {
+                    "default": [],
+                    "maxItems": 3,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "/onboarding/ember.jpg",
+                        "/onboarding/clouds.jpg",
+                        "/onboarding/botanical.jpg",
+                        "/onboarding/alpine.jpg",
+                        "/onboarding/city.jpg",
+                        "/onboarding/midnight.jpg"
+                      ]
+                    }
+                  },
+                  "interests": {
+                    "default": [],
+                    "maxItems": 5,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "technology",
+                        "relationships",
+                        "lifestyle",
+                        "business",
+                        "education",
+                        "entertainment",
+                        "food",
+                        "travel",
+                        "fitness",
+                        "fashion",
+                        "mental-health",
+                        "gaming",
+                        "books",
+                        "politics",
+                        "local-issues"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "communityId",
+                  "text",
+                  "attachmentIds",
+                  "mediaUrls",
+                  "interests"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Social feed"
+        ]
+      }
+    },
+    "/v1/posts/{id}/{kind}": {
+      "put": {
+        "operationId": "SocialFeedController_react",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "kind",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Social feed"
+        ]
+      }
+    },
+    "/v1/posts/{id}/comments": {
+      "get": {
+        "operationId": "SocialFeedController_comments",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Social feed"
+        ]
+      },
+      "post": {
+        "operationId": "SocialFeedController_comment",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Social feed"
+        ]
+      }
+    },
+    "/v1/profiles/{handle}/follow": {
+      "put": {
+        "operationId": "SocialFeedController_follow",
+        "parameters": [
+          {
+            "name": "handle",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Social feed"
+        ]
+      }
+    },
+    "/v1/communities/{id}/membership": {
+      "put": {
+        "operationId": "SocialFeedController_membership",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Social feed"
+        ]
+      }
+    },
+    "/v1/activity": {
+      "get": {
+        "operationId": "SocialFeedController_activity",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Social feed"
+        ]
+      }
+    },
+    "/v1/activity/read": {
+      "post": {
+        "operationId": "SocialFeedController_read",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Social feed"
+        ]
+      }
+    },
+    "/v1/posts/{id}/restore": {
+      "post": {
+        "operationId": "SocialFeedController_restore",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Social feed"
+        ]
+      }
+    },
+    "/v1/media": {
+      "post": {
+        "operationId": "MediaController_upload",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Media"
+        ]
+      }
+    },
+    "/v1/media/{id}": {
+      "delete": {
+        "operationId": "MediaController_discard",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Media"
+        ]
+      },
+      "get": {
+        "operationId": "MediaController_read",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Media"
+        ]
+      }
+    },
+    "/v1/avatars/generate": {
+      "post": {
+        "operationId": "AvatarsController_generate",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Avatars"
+        ]
+      }
+    },
+    "/v1/avatars/me": {
+      "get": {
+        "operationId": "AvatarsController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Avatars"
+        ]
+      },
+      "patch": {
+        "operationId": "AvatarsController_save",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Avatars"
+        ]
+      }
+    },
+    "/v1/avatars/me/randomize": {
+      "post": {
+        "operationId": "AvatarsController_randomize",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Avatars"
+        ]
+      }
+    },
+    "/v1/avatars/me/reset": {
+      "post": {
+        "operationId": "AvatarsController_reset",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Avatars"
+        ]
+      }
+    },
+    "/v1/avatars/me/export/{format}": {
+      "get": {
+        "operationId": "AvatarsController_export",
+        "parameters": [
+          {
+            "name": "format",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Avatars"
+        ]
+      }
+    },
+    "/v1/themes": {
+      "get": {
+        "operationId": "ThemesController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Themes"
+        ]
+      },
+      "post": {
+        "operationId": "ThemesController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Themes"
+        ]
+      }
+    },
+    "/v1/themes/state": {
+      "get": {
+        "operationId": "ThemesController_state",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Themes"
+        ]
+      }
+    },
+    "/v1/themes/{id}": {
+      "patch": {
+        "operationId": "ThemesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Themes"
+        ]
+      },
+      "delete": {
+        "operationId": "ThemesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Themes"
+        ]
+      }
+    },
+    "/v1/themes/default": {
+      "post": {
+        "operationId": "ThemesController_defaults",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Themes"
+        ]
+      }
+    },
+    "/v1/themes/{id}/duplicate": {
+      "post": {
+        "operationId": "ThemesController_duplicate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Themes"
+        ]
+      }
+    },
+    "/v1/themes/{id}/apply": {
+      "post": {
+        "operationId": "ThemesController_apply",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Themes"
+        ]
+      }
+    },
+    "/v1/themes/{id}/restore": {
+      "post": {
+        "operationId": "ThemesController_restore",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Themes"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Circle.social API",
+    "description": "",
+    "version": "1",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "cookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "circle_session"
+      }
+    },
+    "schemas": {}
+  }
+}

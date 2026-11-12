@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "Circle.social",
+    "slug": "circle-social",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "../../assets/brand/app-icon.png",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.circle-social",
+      "appleTeamId": "7889MB544R",
+      "infoPlist": {
+        "NSLocalNetworkUsageDescription": "Allow Circle.social to connect to the development backend on your Mac over your local network.",
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": false,
+          "NSAllowsLocalNetworking": true
+        }
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "../../assets/brand/app-icon.png",
+        "backgroundColor": "#0B0B0B"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "../../assets/brand/app-icon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-web-browser",
+      "expo-secure-store",
+      "expo-font",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Allow Circle.social to record voice posts when you choose to record.",
+          "enableBackgroundRecording": false
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Circle.social to select photos you want to share.",
+          "cameraPermission": false,
+          "microphonePermission": false
+        }
+      ]
+    ],
+    "scheme": "circlesocial"
+  }
+}

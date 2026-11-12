@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+.next/
+.expo/
+.turbo/
+coverage/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# macOS
+.DS_Store
+
+# Editors
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Testing
+playwright-report/
+test-results/
+
+# Secrets and certificates
+*.pem
+*.key
+*.crt
+
+# Local databases and backups
+*.db
+*.sqlite
+*.dump
+*.backup
+
+# Generated Prisma client and TypeScript metadata
+apps/api/src/generated/prisma/
+*.tsbuildinfo
+artifacts/
+
+# Fontshare fonts are private build assets; fetch from the official source.
+assets/brand/fonts/Chillax-*
+
+# Downloaded local GeoIP database (refresh with pnpm geoip:setup)
+infrastructure/geoip/*.mmdb*
+infrastructure/geoip/*.partial
+infrastructure/geoip/*.metadata.json
